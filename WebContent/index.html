@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
+</head>
+<body>
+    <div class="container">
+        <h1>Project Management</h1>
+        <ul class="nav nav-tabs nav-justified" id="myTabs">
+            <li class="active"><a data-toggle="tab" role="tab" href="#employee">Employee</a></li>
+            <li><a data-toggle="tab" role="tab" href="#project">Project</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade in active" id="employee">
+                <div class="col-sm-5">
+                    <br/>
+                        <form class="form-inline" id="employee_search_by_id">
+                            <div class="form-group">
+                                <div class="col-sm-12"><input type="text" id="employee_search_id" class="form-control" required="true" placeholder="Search by id"></div>
+                            </div>
+                            <button type="submit" class="btn btn-success">Search</button>
+                        </form>
+                        <br>
+                        <form class="form-inline" id="employee_search_by_name">
+                            <div class="form-group">
+                                <div class="col-sm-12"><input type="text" id="employee_search_name" class="form-control" required="true" placeholder="Search by name"></div>
+                            </div>
+                            <button type="submit" class="btn btn-success">Search</button>
+                        </form>
+                    <hr/>
+                    
+                    <div id="employee_message">
+                        
+                    </div>
+                    <div id="employee_info">
+                    <div class="panel panel-info" >
+                        <div class="panel-heading">Employee info.</div>
+                        <div class="panel-body" id="employee_info_body"></div>
+                    </div>
+                    <div class="center-block text-center row">
+                            <button type="button" class="btn btn-success" id="employee_update_button">Update</button>
+                            <button type="button" class="btn btn-danger" id="employee_delete_button">Delete</button>
+                            <button type="button" class=" btn btn-default" id="show_employee_projects">Show projects</button>
+                    </div>
+                    </div>
+                    <form class="form-horizontal" id="employee_form">
+                        <input type="text" id="employee_form_id" style="display: none;">
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Name:</label>
+                            <div class="col-sm-9"><input type="text" id="employee_form_name" class="form-control" required="true" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Email:</label>
+                            <div class="col-sm-9"><input type="email" id="employee_form_email" class="form-control" required="true" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3">Depatrtment:</label>
+                            <div class="col-sm-9">
+                            <select class="form-control" id="employee_form_department" required="true" >
+                                <option value="1">Production</option>
+                                <option value="2">Testing</option>
+                                <option value="3">Backend</option>
+                                <option value="4">Frontend</option>
+                            </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success center-block">Submit</button>
+                    </form>
+                </div>
+
+                <div class="col-sm-7">
+                    <table id="employee_search_table" class="table table-hover">
+                        
+                    </table>
+                    <table id="employee_projects_table" class="table table-hover"></table>
+                    <br>
+                    <div class="text-right">
+                    <button type="button" class="btn btn-success" id="add_new_employee">Add new</button>
+                    </div>
+                    <table id="employee_table" class="table table-hover">
+                        
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="project">
+                <div class="col-sm-5">
+                <br/>
+                    <form class="form-inline" id="project_search_by_id">
+                        <div class="form-group">
+                            <div class="col-sm-12"><input type="text" id="project_search_id" class="form-control" required="true" placeholder="Search by id"></div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Search</button>
+                    </form>
+                    <br>
+                    <form class="form-inline" id="project_search_by_name">
+                        <div class="form-group">
+                            <div class="col-sm-12"><input type="text" id="project_search_name" class="form-control" required="true" placeholder="Search by name"></div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Search</button>
+                    </form>
+                <hr/>
+                    <div id="project_message">
+                        
+                    </div>
+                    <div id="project_info">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">Project info.</div>
+                            <div class="panel-body" id="project_info_body"></div>
+                        </div>
+                        <div class="center-block text-center row">
+                                <button type="button" class="btn btn-success" id="project_update_button">Update</button>
+                                <button type="button" class="btn btn-danger" id="project_delete_button">Delete</button>
+                                <button type="button" class="btn btn-default" id="assign_employee">Assign employee</button>
+                                <button type="button" class="btn btn-default" id="mark_completed">Completed</button>
+                        </div>
+                    </div>
+                    <form class="form-horizontal" id="project_form">
+                        <input type="text" id="project_form_id" style="display: none;">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Name:</label>
+                            <div class="col-sm-9"><input type="text" id="project_form_name" class="form-control" required="true"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Description:</label>
+                            <div class="col-sm-9"><textarea class="form-control" rows="2" id="project_form_description"></textarea></div>
+                        </div>
+                        <!-- <div class="form-group">
+                            <label class="col-sm-3 control-label">Name:</label>
+                            <div class="col-sm-9"><input type="date" id="project_form_start_date" class="form-control" required="true"></div>
+                        </div> -->
+                        <button type="submit" class="center-block btn btn-success">Submit</button>
+                    </form>
+                    <form class="form-horizontal" id="assign_project_form">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Start Date:</label>
+                            <div class="col-sm-8"><input type="date" id="assign_project_form_date" class="form-control"/></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Employee ID:</label>
+                            <div class="col-sm-8"><input type="text" id="assign_project_form_eid" class="form-control" required="true"></div>
+                        </div>
+                        <button type="submit" class="center-block btn btn-success">Submit</button>
+                    </form>
+                    <form class="form-horizontal" id="project_completion_form">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Completion Date:</label>
+                            <div class="col-sm-8"><input type="date" id="project_completion_form_date" class="form-control"/></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">Performance Score:</label>
+                            <div class="col-sm-8"><input type="text" id="project_completion_form_score" class="form-control" required="true"></div>
+                        </div>
+                        <button type="submit" class="center-block btn btn-success">Submit</button>
+                    </form>
+                </div>
+                <div class="col-sm-7">
+                    <table id="project_search_table" class="table table-hover">
+                        
+                    </table>
+                    <div class="text-right">
+                        <button type="button" class="btn btn-success" id="add_new_project">Add new</button>
+                    </div>
+                    <div>
+                        <table class="table table-hover" id="project_table">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="project_table_body">
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+</body>
+</html>
