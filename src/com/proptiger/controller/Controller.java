@@ -17,29 +17,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.proptiger.dao.EmployeeDao;
-import com.proptiger.dao.ProjectDao;
 import com.proptiger.model.Employee;
 import com.proptiger.model.EmployeeStatus;
 import com.proptiger.model.Project;
 import com.proptiger.model.Status;
+import com.proptiger.services.EmployeeService;
+import com.proptiger.services.ProjectService;
 
-@CrossOrigin
 @RestController
 public class Controller {
 
 	@Autowired
-	private ProjectDao projectServices;
+	private ProjectService projectService;
 	@Autowired
-	private EmployeeDao employeeService;
-
-	@RequestMapping(value = "/hello")
-	public void test() {
-		List<Employee> list = employeeService.findAll();
-		for (Employee e : list) {
-			employeeService.updateScore(e.getId());
-		}
-	}
+	private EmployeeService employeeService;
 
 	// Mappings for employee entity
 
@@ -56,7 +47,7 @@ public class Controller {
 		return new ResponseEntity<List<Employee>>(list, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/employee/id/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/employee/{id:[0-9]+}", method = RequestMethod.GET)
 	public ResponseEntity<Employee> listById(@PathVariable Long id) {
 		Employee e = employeeService.findOne(id);
 		if (e == null)
@@ -64,7 +55,7 @@ public class Controller {
 		return new ResponseEntity<>(e, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/employee/name/{name}", method = RequestMethod.GET)
+	@RequestMapping(value = "/employee/{name:[a-zA-Z-]+}", method = RequestMethod.GET)
 	public ResponseEntity<List<Employee>> findByName(@PathVariable String name) {
 		List<Employee> list = employeeService.findByName(name);
 		if (list.isEmpty())
@@ -75,11 +66,9 @@ public class Controller {
 	@RequestMapping(value = "/employee", method = RequestMethod.POST)
 	public ResponseEntity<Void> insertEmployee(@RequestBody Employee e) {
 		try {
-			System.out.println(e.getDepartmentId());
 			employeeService.addEmployee(e);
 			return new ResponseEntity<Void>(HttpStatus.OK);
 		} catch (Exception e1) {
-			System.out.println("Error inserting employee");
 			return new ResponseEntity<Void>(HttpStatus.NOT_MODIFIED);
 		}
 	}
@@ -103,7 +92,7 @@ public class Controller {
 
 	@RequestMapping(value = "/project", method = RequestMethod.GET)
 	public ResponseEntity<List<Project>> findAll() {
-		List<Project> list = projectServices.findAll();
+		List<Project> list = projectService.findAll();
 		if (list.isEmpty())
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		Iterator<Project> iterator = list.iterator();
@@ -114,17 +103,17 @@ public class Controller {
 		return new ResponseEntity<>(list, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/project/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/project/{id:[0-9]+}", method = RequestMethod.GET)
 	public ResponseEntity<Project> findById(@PathVariable Long id) {
-		Project project = projectServices.findOne(id);
+		Project project = projectService.findOne(id);
 		if (project == null)
 			return new ResponseEntity<Project>(HttpStatus.NO_CONTENT);
 		return new ResponseEntity<>(project, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/project/name/{name}", method = RequestMethod.GET)
+	@RequestMapping(value = "/project/{name:[a-zA-Z-]+}", method = RequestMethod.GET)
 	public ResponseEntity<List<Project>> findProjectByName(@PathVariable String name) {
-		List<Project> list = projectServices.findByName(name);
+		List<Project> list = projectService.findByName(name);
 		if (list.isEmpty())
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		return new ResponseEntity<>(list, HttpStatus.OK);
@@ -133,7 +122,7 @@ public class Controller {
 	@RequestMapping(value = "/project", method = RequestMethod.POST)
 	public ResponseEntity<Void> insertProject(@RequestBody Project p) {
 		try {
-			projectServices.addProject(p);
+			projectService.addProject(p);
 			return new ResponseEntity<Void>(HttpStatus.OK);
 		} catch (SQLIntegrityConstraintViolationException e) {
 			// TODO: handle exception
@@ -144,7 +133,7 @@ public class Controller {
 	@RequestMapping(value = "/project/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Void> updateProject(@RequestBody Project p, @PathVariable Long id) {
 		try {
-			projectServices.updateProject(p, id);
+			projectService.updateProject(p, id);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (SQLIntegrityConstraintViolationException e) {
 			// TODO Auto-generated catch block
@@ -152,41 +141,47 @@ public class Controller {
 		}
 	}
 
-	@RequestMapping(value = "/project/{pId}/{eId}", method = RequestMethod.PUT)
-	public ResponseEntity<Void> addEmployeeToProject(@PathVariable Long pId, @PathVariable Long eId,
+	// Not working without @CrossOrigin
+	@CrossOrigin
+	@RequestMapping(value = "/project", method = RequestMethod.PUT)
+	public ResponseEntity<Void> addEmployeeToProject(@RequestParam(name = "pid") Long pId,
+			@RequestParam(name = "eid") Long eId,
 			@RequestParam(name = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
 		Employee e = employeeService.findOne(eId);
 		if (e == null)
 			return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 		if (date == null)
 			date = new Date();
-		projectServices.assignProject(pId, eId, date);
+		projectService.assignProject(pId, eId, date);
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/project/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
-		Project project = projectServices.deleteProject(id);
+		Project project = projectService.deleteProject(id);
 		if (project == null)
 			return new ResponseEntity<Void>(HttpStatus.NOT_MODIFIED);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/project/employee/{eId}", method = RequestMethod.GET)
-	public ResponseEntity<List<Project>> getByEmployeeId(@PathVariable Long eId) {
-		List<Project> list = projectServices.getByEmployeeId(eId);
+	@RequestMapping(value = "/project-by-employee", method = RequestMethod.GET)
+	public ResponseEntity<List<Project>> getByEmployeeId(@RequestParam(name = "eid", required = true) Long eId) {
+		List<Project> list = projectService.getByEmployeeId(eId);
 		if (list.isEmpty())
 			return new ResponseEntity<List<Project>>(HttpStatus.NO_CONTENT);
 		else
 			return new ResponseEntity<List<Project>>(list, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/project/{pId}/score/{score}", method = RequestMethod.PUT)
-	public ResponseEntity<Void> markProjectComplete(@PathVariable Long pId, @PathVariable Double score,
+	// Not working without @CrossOrigin
+	@CrossOrigin
+	@RequestMapping(value = "/complete_project", method = RequestMethod.PUT)
+	public ResponseEntity<Void> markProjectComplete(@RequestParam(name = "pid") Long pId,
+			@RequestParam(name = "score") Double score,
 			@RequestParam(required = false, name = "date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
 		if (date == null)
 			date = new Date();
-		Long eId = projectServices.markCompleted(pId, score, date);
+		Long eId = projectService.markCompleted(pId, score, date);
 		employeeService.updateScore(eId);
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}

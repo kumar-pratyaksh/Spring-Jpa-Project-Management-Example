@@ -1,4 +1,4 @@
-package com.proptiger.dao;
+package com.proptiger.services.impl;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Date;
@@ -11,14 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.proptiger.model.Project;
 import com.proptiger.model.Status;
-import com.proptiger.repository.ProjectRepository;
+import com.proptiger.repository.ProjectDao;
+import com.proptiger.services.ProjectService;
 
 @Service
-@Transactional
-public class ProjectDao {
+public class ProjectServiceImpl implements ProjectService {
 
 	@Autowired
-	private ProjectRepository repository;
+	private ProjectDao repository;
 
 	public List<Project> findAll() {
 		return repository.findAll(new Sort(Sort.Direction.DESC, "status"));
@@ -32,10 +32,12 @@ public class ProjectDao {
 		return repository.findByNameContainingIgnoreCase(name);
 	}
 
+	@Transactional
 	public void addProject(Project p) throws SQLIntegrityConstraintViolationException {
 		repository.save(p);
 	}
 
+	@Transactional
 	public void updateProject(Project p, Long id) throws SQLIntegrityConstraintViolationException {
 		Project existing = repository.findOne(id);
 		existing.setEndDate(p.getEndDate());
@@ -44,6 +46,7 @@ public class ProjectDao {
 		// existing.set
 	}
 
+	@Transactional
 	public void assignProject(Long projectId, Long employeeId, Date date) {
 		Project existing = repository.findOne(projectId);
 		existing.setStartDate(date);
@@ -51,6 +54,7 @@ public class ProjectDao {
 		existing.setEmployeeId(employeeId);
 	}
 
+	@Transactional
 	public Long markCompleted(Long projectId, Double score, Date date) {
 		Project existing = repository.findOne(projectId);
 		existing.setStatus(Status.COMPLETED);
@@ -63,6 +67,7 @@ public class ProjectDao {
 		return repository.findByEmployeeIdOrderByStatusAsc(id);
 	}
 
+	@Transactional
 	public Project deleteProject(Long id) {
 		Project project = repository.findOne(id);
 		if (project == null)

@@ -247,7 +247,7 @@ $(document).ready(function($) {
 		$('#employee_message').empty();
 		$("#employee_search_table").empty();
 		$.ajax({
-			url: 'http://localhost:8080/EmployeeExample/project/employee/'+$('#employee_form_id').val(),
+			url: 'http://localhost:8080/EmployeeExample/project-by-employee?eid='+$('#employee_form_id').val(),
 			type: 'GET'
 		})
 		.done(function(data) {
@@ -303,7 +303,7 @@ $(document).ready(function($) {
 		$('#employee_projects_table').hide();
 		$('#employee_info').hide();
 		$.ajax({
-			url: 'http://localhost:8080/EmployeeExample/employee/name/'+$("#employee_search_name").val(),
+			url: 'http://localhost:8080/EmployeeExample/employee/'+$("#employee_search_name").val(),
 			type: 'GET'
 		})
 		.done(function(data,status) {
@@ -355,7 +355,7 @@ $(document).ready(function($) {
 		$('#employee_projects_table').hide();
 		$('#employee_info').hide();
 		$.ajax({
-			url: 'http://localhost:8080/EmployeeExample/employee/id/'+$('#employee_search_id').val(),
+			url: 'http://localhost:8080/EmployeeExample/employee/'+$('#employee_search_id').val(),
 			type: 'GET'
 		})
 		.done(function(data,status) {
@@ -481,9 +481,10 @@ $(document).ready(function($) {
 		$('#assign_project_form').submit(function(event) {
 			/* Act on the event */
 			$('#project_search_table').hide();
-			var url='http://localhost:8080/EmployeeExample/project/'+$('#project_form_id').val()+'/'+$('#assign_project_form_eid').val();
+			var url='http://localhost:8080/EmployeeExample/project?pid='+$('#project_form_id').val();
+			url+='&eid='+$('#assign_project_form_eid').val();
 			if($('#assign_project_form_date').val()!="")
-				url+='?date='+$('#assign_project_form_date').val();
+				url+='&date='+$('#assign_project_form_date').val();
 			//console.log($('#project_completion_form_date').val());
 			$.ajax({
 				url: url,
@@ -518,9 +519,9 @@ $(document).ready(function($) {
 		$('#project_completion_form').show();
 		$('#project_completion_form').submit(function(event) {
 			/* Act on the event */
-			var url='http://localhost:8080/EmployeeExample/project/'+$('#project_form_id').val()+'/score/'+$('#project_completion_form_score').val();
+			var url='http://localhost:8080/EmployeeExample/complete_project?pid='+$('#project_form_id').val()+'&score='+$('#project_completion_form_score').val();
 			if($('#project_completion_form_date').val()!="")
-				url+='?date='+$('#project_completion_form_date').val();
+				url+='&date='+$('#project_completion_form_date').val();
 			console.log($('#project_completion_form_date').val());
 			$.ajax({
 				url: url,
@@ -623,10 +624,10 @@ $(document).ready(function($) {
 		$('#project_search_table').empty();
 		var name=$("#project_search_name").val();
 		if(name==""){
-			$('#project_message').html('<div class="alert alert-warning">Enter ID please.</div>');
+			$('#project_message').html('<div class="alert alert-warning">Enter name please.</div>');
 		}else{
 			$.ajax({
-				url: 'http://localhost:8080/EmployeeExample/project/name/'+name,
+				url: 'http://localhost:8080/EmployeeExample/project/'+name,
 				type: "GET"
 			})
 			.done(function(data,status) {

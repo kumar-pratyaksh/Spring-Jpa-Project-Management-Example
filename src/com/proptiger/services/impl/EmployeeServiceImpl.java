@@ -1,4 +1,4 @@
-package com.proptiger.dao;
+package com.proptiger.services.impl;
 
 import java.util.List;
 
@@ -10,29 +10,21 @@ import com.proptiger.model.Employee;
 import com.proptiger.model.EmployeeStatus;
 import com.proptiger.model.Project;
 import com.proptiger.model.Status;
-import com.proptiger.repository.EmployeeRepository;
+import com.proptiger.repository.EmployeeDao;
+import com.proptiger.services.EmployeeService;
 
 @Service
-@Transactional
-public class EmployeeDao {
+public class EmployeeServiceImpl implements EmployeeService {
 
 	@Autowired
-	private EmployeeRepository repository;
+	private EmployeeDao repository;
 
+	@Transactional
 	public void addEmployee(Employee e) {
-		// List<Project> projects = e.getProjects();
-		// double score = 0.0;
-		// if (!projects.isEmpty()) {
-		//
-		// for (int i = 0; i < projects.size(); i++) {
-		// score += projects.get(i).getPerformanceScore();
-		// }
-		// score /= projects.size();
-		// }
-		// e.setScore(score);
 		repository.save(e);
 	}
 
+	@Transactional
 	public void updateEmployee(Employee e, Long id) {
 		Employee existingEmployee = repository.findOne(id);
 		existingEmployee.setName(e.getName());
@@ -52,11 +44,13 @@ public class EmployeeDao {
 		return repository.findByNameContainingIgnoreCase(name);
 	}
 
+	@Transactional
 	public void delete(Long id) {
 		Employee employee = repository.findOne(id);
 		employee.setStatus(EmployeeStatus.REMOVED);
 	}
 
+	@Transactional
 	public void updateScore(Long id) {
 		Employee employee = repository.findOne(id);
 		List<Project> list = employee.getProjects();
